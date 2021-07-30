@@ -3,12 +3,17 @@ package com.vladbudan.restapp.repository;
 import com.vladbudan.restapp.model.User;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserRepository {
 
-    void save(User user);
-    void update(User user);
-    User delete(Integer id );
-    User getById(Integer id);
-    List<User> getAllUser();
+    User save(User user);
+
+    User update(User user);
+
+    User delete(Integer id);
+
+    Optional<User> getById(Integer id);
+
+    List<User> getAllUsers();
 }

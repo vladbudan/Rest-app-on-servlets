@@ -1,15 +1,19 @@
 package com.vladbudan.restapp.repository;
 
 import com.vladbudan.restapp.model.Cat;
-import com.vladbudan.restapp.model.User;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CatRepository {
 
     Cat save(Cat cat);
-    void update(Cat cat);
-    void delete(Integer id );
-    Cat getById(Integer id);
+
+    Cat update(Cat cat);
+
+    void delete(Integer id);
+
+    Optional<Cat> getCatById(Integer id);
+
     List<Cat> getAllCat();
 }

@@ -1,27 +1,30 @@
 package com.vladbudan.restapp.service.impl;
 
+import com.vladbudan.restapp.exception.ResourceNotFoundException;
 import com.vladbudan.restapp.model.User;
 import com.vladbudan.restapp.repository.UserRepository;
 import com.vladbudan.restapp.service.UserService;
+import lombok.Data;
 
 import java.util.List;
+import java.util.Optional;
 
+@Data
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
-    public UserServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    @Override
+    public User save(User user) {
+
+        return userRepository.save(user);
     }
 
     @Override
-    public void save(User user) {
-        userRepository.save(user);
-    }
+    public User update(User user) {
 
-    @Override
-    public void update(User user) {
-        userRepository.update(user);
+
+        return userRepository.update(user);
     }
 
     @Override
@@ -30,13 +33,29 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getById(Integer id) {
+    public Optional<User> getById(Integer id) {
+
+        Optional<User> optionalUser = userRepository.getById(id);
+
+        if (!optionalUser.isPresent()) {
+            throw new ResourceNotFoundException("User with such id not found!");
+        }
+
         return userRepository.getById(id);
+
     }
 
     @Override
-    public List<User> getAllUser() {
+    public List<User> getAllUsers() {
 
-        return userRepository.getAllUser();
+        List<User> users = userRepository.getAllUsers();
+
+        if (users == null) {
+            throw new ResourceNotFoundException("Users failed!");
+        }
+
+        return userRepository.getAllUsers();
+
     }
+
 }
