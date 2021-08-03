@@ -6,23 +6,24 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.Set;
 
+import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.GenerationType.AUTO;
+
 @Data
 @Entity
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "users")
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = AUTO)
     @Column(name = "user_id")
     private int id;
 
@@ -33,7 +34,7 @@ public class User {
     private String lastName;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "user", targetEntity = Pet.class, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", targetEntity = Pet.class, fetch = EAGER)
     private Set<Pet> pets;
 
 }

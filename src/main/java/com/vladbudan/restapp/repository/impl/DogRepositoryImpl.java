@@ -2,36 +2,44 @@ package com.vladbudan.restapp.repository.impl;
 
 import com.vladbudan.restapp.model.Dog;
 import com.vladbudan.restapp.repository.DogRepository;
-import com.vladbudan.restapp.util.HibernateUtil;
+import com.vladbudan.restapp.config.HibernateConfig;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.logging.Logger;
+
+import static java.util.logging.Logger.getLogger;
+import static java.util.Objects.isNull;
 
 public class DogRepositoryImpl implements DogRepository {
+
+    Logger log = getLogger(CatRepositoryImpl.class.getName());
 
     @Override
     public Dog save(Dog dog) {
         Transaction transaction = null;
-        try(Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try(Session session = HibernateConfig.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
 
             session.save(dog);
 
             transaction.commit();
         } catch(Exception e) {
-            if (transaction != null) {
+            if (!isNull(transaction)) {
                 transaction.rollback();
             }
-            e.printStackTrace();
+            log.info(e.getMessage());
         }
         return dog;
     }
 
     @Override
-    public void update(Dog dog) {
+    public Dog update(Dog dog) {
         Transaction transaction = null;
-        try(Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try(Session session = HibernateConfig.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
 
             session.saveOrUpdate(dog);
@@ -42,34 +50,36 @@ public class DogRepositoryImpl implements DogRepository {
             if(transaction != null) {
                 transaction.rollback();
             }
+            log.info(e.getMessage());
         }
+        return dog;
     }
 
     @Override
     public void delete(Integer id) {
         Transaction transaction = null;
-        Dog dog = null;
-        try(Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try(Session session = HibernateConfig.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
 
-            dog = session.get(Dog.class, id);
+            Dog dog = session.get(Dog.class, id);
 
             session.delete(dog);
 
             transaction.commit();
         }
         catch(Exception e) {
-            if(transaction != null) {
+            if(!isNull(transaction)) {
                 transaction.rollback();
             }
+            log.info(e.getMessage());
         }
     }
 
     @Override
-    public Dog getById(Integer id) {
+    public Optional<Dog> getDogById(Integer id) {
         Transaction transaction = null;
         Dog dog = null;
-        try(Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try(Session session = HibernateConfig.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
 
             dog = session.get(Dog.class, id);
@@ -77,27 +87,29 @@ public class DogRepositoryImpl implements DogRepository {
             transaction.commit();
         }
         catch(Exception e) {
-            if(transaction != null) {
+            if(!isNull(transaction)) {
                 transaction.rollback();
             }
+            log.info(e.getMessage());
         }
-        return dog;
+        return Optional.ofNullable(dog);
     }
 
     @Override
     public List<Dog> getAllDog() {
         Transaction transaction = null;
         List<Dog> dogs = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
 
             dogs = session.createQuery("from Dog", Dog.class).list();
 
             transaction.commit();
         } catch (Exception e) {
-            if (transaction != null) {
+            if (!isNull(transaction)) {
                 transaction.rollback();
             }
+            log.info(e.getMessage());
         }
         return dogs;
     }

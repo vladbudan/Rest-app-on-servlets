@@ -1,14 +1,19 @@
 package com.vladbudan.restapp.service;
 
 import com.vladbudan.restapp.model.Cat;
-import com.vladbudan.restapp.model.User;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CatService {
 
-    void save(Cat cat);
-    void update(Cat cat);
-    void delete(Integer id );
-    Cat getById(Integer id);
+    Optional<Cat> getCatById(int id);
+
+    Cat addCat(Cat cat);
+
+    Cat update(Cat cat);
+
+    void deleteCat(int id);
+
+    List<Cat> getAllCats();
 }

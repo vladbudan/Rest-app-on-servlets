@@ -3,25 +3,25 @@ package com.vladbudan.restapp.service.impl;
 import com.vladbudan.restapp.model.User;
 import com.vladbudan.restapp.repository.UserRepository;
 import com.vladbudan.restapp.service.UserService;
+import lombok.Data;
 
 import java.util.List;
+import java.util.Optional;
 
+@Data
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
-    public UserServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    @Override
+    public User save(User user) {
+
+        return userRepository.save(user);
     }
 
     @Override
-    public void save(User user) {
-        userRepository.save(user);
-    }
-
-    @Override
-    public void update(User user) {
-        userRepository.update(user);
+    public User update(User user) {
+        return userRepository.update(user);
     }
 
     @Override
@@ -30,13 +30,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getById(Integer id) {
+    public Optional<User> getById(Integer id) {
+
         return userRepository.getById(id);
     }
 
     @Override
-    public List<User> getAllUser() {
+    public List<User> getAllUsers() {
 
-        return userRepository.getAllUser();
+        return userRepository.getAllUsers();
     }
+
 }

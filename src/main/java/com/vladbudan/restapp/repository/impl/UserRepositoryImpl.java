@@ -2,34 +2,44 @@ package com.vladbudan.restapp.repository.impl;
 
 import com.vladbudan.restapp.model.User;
 import com.vladbudan.restapp.repository.UserRepository;
-import com.vladbudan.restapp.util.HibernateUtil;
+import com.vladbudan.restapp.config.HibernateConfig;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import javax.persistence.NoResultException;
 import java.util.List;
+import java.util.Optional;
+import java.util.logging.Logger;
+
+import static java.util.logging.Logger.getLogger;
+import static java.util.Objects.isNull;
 
 public class UserRepositoryImpl implements UserRepository {
 
+    Logger log = getLogger(CatRepositoryImpl.class.getName());
+
     @Override
-    public void save(User user) {
+    public User save(User user) {
         Transaction transaction = null;
-        try(Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try(Session session = HibernateConfig.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
 
             session.save(user);
+
             transaction.commit();
         } catch(Exception e) {
-            if (transaction != null) {
+            if (!isNull(transaction)) {
                 transaction.rollback();
             }
-            e.printStackTrace();
+            log.info(e.getMessage());
         }
+        return user;
     }
 
     @Override
-    public void update(User user) {
+    public User update(User user) {
         Transaction transaction = null;
-        try(Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try(Session session = HibernateConfig.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
 
             session.saveOrUpdate(user);
@@ -37,17 +47,19 @@ public class UserRepositoryImpl implements UserRepository {
             transaction.commit();
         }
         catch(Exception e) {
-            if(transaction != null) {
+            if(!isNull(transaction)) {
                 transaction.rollback();
             }
+            log.info(e.getMessage());
         }
+        return user;
     }
 
     @Override
     public User delete(Integer id) {
         Transaction transaction = null;
         User user = null;
-        try(Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try(Session session = HibernateConfig.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
 
             user = session.get(User.class, id);
@@ -57,46 +69,52 @@ public class UserRepositoryImpl implements UserRepository {
             transaction.commit();
         }
         catch(Exception e) {
-            if(transaction != null) {
+            if(!isNull(transaction)) {
                 transaction.rollback();
             }
+            log.info(e.getMessage());
         }
         return user;
     }
 
     @Override
-    public User getById(Integer id) {
+    public Optional<User> getById(Integer id) {
         Transaction transaction = null;
         User user = null;
-        try(Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try(Session session = HibernateConfig.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
 
             user = session.createQuery("from User u where u.id = " + id, User.class).getSingleResult();
 
             transaction.commit();
         }
+        catch (NoResultException e){
+            // if there isn't user
+        }
         catch(Exception e) {
-            if(transaction != null) {
+            if(!isNull(transaction)) {
                 transaction.rollback();
             }
+            log.info(e.getMessage());
         }
-        return user;
+        return Optional.ofNullable(user);
     }
 
     @Override
-    public List<User> getAllUser() {
+    public List<User> getAllUsers() {
         Transaction transaction = null;
         List<User> users = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        try (Session session = HibernateConfig.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
 
             users = session.createQuery("from User", User.class).list();
 
             transaction.commit();
         } catch (Exception e) {
-            if (transaction != null) {
+            if (!isNull(transaction)) {
                 transaction.rollback();
             }
+            log.info(e.getMessage());
         }
         return users;
     }
